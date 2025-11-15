@@ -1,0 +1,11 @@
+networks:
+  caddy:
+    external: true
+    name: server_caddy
+services:
+  gic4:
+    build: .
+    ports:
+      - '8086:8086'
+    networks:
+      - caddy
