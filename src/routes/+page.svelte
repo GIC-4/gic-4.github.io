@@ -20,6 +20,7 @@
 	import type { IroColorPicker } from '@jaames/iro/dist/ColorPicker';
 	import { getContrastTextColor, getSegmentMeaning } from '$lib/utils';
 	import type { GICDigits } from '$lib/types';
+	import GitHubLink from '$lib/components/GitHubLink.svelte';
 	// Access query params using browser API, reactive
 	let code = $state('');
 	let ignoreAlpha = $state(false);
@@ -201,6 +202,7 @@
 	}
 </script>
 
+<GitHubLink />
 <div class="mt-8 space-y-12 text-center">
 	{#if code}
 		<div class="mx-auto flex flex-col items-center">

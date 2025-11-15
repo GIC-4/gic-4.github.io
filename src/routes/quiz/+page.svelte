@@ -40,7 +40,7 @@
 			disableOmit: true
 		}
 	];
-	const SIZE = 800;
+	const SIZE = 600;
 
 	// 0-3 low, 4-6 medium, 7-9 high
 
@@ -126,7 +126,7 @@
 	}
 </script>
 
-<div class="mx-auto my-8 max-w-5xl space-y-8">
+<div class="mx-auto my-8 max-w-3xl space-y-8">
 	<StepIndicator {currentStep} steps={steps.map((x) => x.name)} />
 
 	<Card
@@ -146,13 +146,15 @@
     ">{steps[currentStep - 1].title}</Heading
 			>
 			{#if !omitX && !omitY}
-				<SelectChart
-					height={SIZE}
-					width={SIZE}
-					{onPointSelect}
-					labelX={steps[currentStep - 1].labelX || 'Fem <-> Masc'}
-					labelY={steps[currentStep - 1].labelY || 'Intensity'}
-				/>
+				<div class="mx-auto flex justify-center">
+					<SelectChart
+						height={SIZE}
+						width={SIZE}
+						{onPointSelect}
+						labelX={steps[currentStep - 1].labelX || 'Fem <-> Masc'}
+						labelY={steps[currentStep - 1].labelY || 'Intensity'}
+					/>
+				</div>
 			{:else if omitX && !omitY && !steps[currentStep - 1].disableOmit}
 				<div class="space-y-4">
 					<P>How intensely do you feel your expression?</P>
