@@ -94,3 +94,51 @@ export function getSegmentMeaning(
 
 	return result.join(', ');
 }
+
+export function getContrastTextColor(color: string): string {
+	// Helper to clamp and parse
+	function clamp(v: number) {
+		return Math.max(0, Math.min(255, v));
+	}
+	let r = 0,
+		g = 0,
+		b = 0;
+	if (color.startsWith('rgba')) {
+		const m = color.match(/rgba?\(([^)]+)\)/);
+		if (m) {
+			const parts = m[1].split(',').map(Number);
+			[r, g, b] = parts;
+		}
+	} else if (color.startsWith('hsla') || color.startsWith('hsl')) {
+		const m = color.match(/hsla?\(([^)]+)\)/);
+		if (m) {
+			// h, s%, l%, [a]
+			const parts = m[1].split(',').map((v) => v.trim());
+			const h = Number(parts[0]);
+			const s = Number(parts[1].replace('%', '')) / 100;
+			const l = Number(parts[2].replace('%', '')) / 100;
+			// Convert HSL to RGB
+			const c = (1 - Math.abs(2 * l - 1)) * s;
+			const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+			const m_ = l - c / 2;
+			let r1 = 0,
+				g1 = 0,
+				b1 = 0;
+			if (h < 60) [r1, g1, b1] = [c, x, 0];
+			else if (h < 120) [r1, g1, b1] = [x, c, 0];
+			else if (h < 180) [r1, g1, b1] = [0, c, x];
+			else if (h < 240) [r1, g1, b1] = [0, x, c];
+			else if (h < 300) [r1, g1, b1] = [x, 0, c];
+			else [r1, g1, b1] = [c, 0, x];
+			r = clamp(Math.round((r1 + m_) * 255));
+			g = clamp(Math.round((g1 + m_) * 255));
+			b = clamp(Math.round((b1 + m_) * 255));
+		}
+	}
+	// Calculate luminance
+	const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+	// console.log('luminance', luminance, color);
+
+	return luminance > 0.5 ? '#222' : '#fff';
+}

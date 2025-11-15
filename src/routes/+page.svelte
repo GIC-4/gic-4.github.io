@@ -8,6 +8,7 @@
 		Heading,
 		Mark,
 		P,
+		Span,
 		Toggle,
 		Tooltip
 	} from 'flowbite-svelte';
@@ -17,7 +18,7 @@
 	import _zip from 'lodash/zip';
 	import _chunk from 'lodash/chunk';
 	import type { IroColorPicker } from '@jaames/iro/dist/ColorPicker';
-	import { getSegmentMeaning } from '$lib/utils';
+	import { getContrastTextColor, getSegmentMeaning } from '$lib/utils';
 	import type { GICDigits } from '$lib/types';
 	// Access query params using browser API, reactive
 	let code = $state('');
@@ -221,8 +222,10 @@
        "
 							onclick={() => {
 								if (code) navigator.clipboard.writeText(code);
-							}}>{code}</Mark
+							}}
 						>
+							<Span style={`color: ${getContrastTextColor(gicColor)}`}>{code}</Span>
+						</Mark>
 						<Tooltip>Copied to clipboard</Tooltip>
 					</Heading>
 					<ButtonGroup class="*:ring-primary-700!">
@@ -249,7 +252,7 @@
 								navigator.clipboard.writeText(gicColor);
 							}}
 						>
-							{gicColor}
+							<Span style={`color: ${getContrastTextColor(gicColor)}`}>{gicColor}</Span>
 						</Mark>
 						<Tooltip>Copied to clipboard</Tooltip>
 					</Heading>

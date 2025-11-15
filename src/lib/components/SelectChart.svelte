@@ -14,15 +14,15 @@
 
 	const { height = 800, width = 800, onPointSelect, labelX, labelY }: Props = $props();
 
-	const titleStyle = {
+	const titleStyle = $derived({
 		cssClass: 'text-lg  ',
 		color: $darkMode ? 'white' : 'black'
-	};
+	});
 
-	const labelStyle = {
+	const labelStyle = $derived({
 		cssClass: 'text-lg  ',
 		colors: $darkMode ? 'white' : 'black'
-	};
+	});
 
 	// Minimal scatter plot for 2D selection
 	let options = $derived<ApexOptions>({
