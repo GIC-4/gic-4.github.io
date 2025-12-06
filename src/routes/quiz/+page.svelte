@@ -196,7 +196,7 @@
 					checked={omitX}
 					onchange={(e) => {
 						omitX = (e.currentTarget as HTMLInputElement).checked;
-					}}>My gender is not on mortal human spectrum.</Toggle
+					}}>My expression is not on binary human spectrum.</Toggle
 				>
 				<Toggle
 					checked={omitY}

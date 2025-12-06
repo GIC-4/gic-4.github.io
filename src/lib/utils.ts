@@ -50,7 +50,7 @@ export function getSegmentMeaning(
 	const y = v[1];
 	if (i != 3) {
 		if (x === null) {
-			result[0] += 'not on mortal human spectrum';
+			result[0] += 'not on binary gender spectrum';
 		} else if (x >= 7) {
 			result[0] += 'very masculine';
 		} else if (x >= 4) {

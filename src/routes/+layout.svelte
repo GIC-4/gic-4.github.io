@@ -8,16 +8,16 @@
 </script>
 
 <svelte:head>
-	<title>GIC-4 - Human Readable Gender Quantifier</title>
+	<title>GIC-4 - Gender Intensity Code - 4</title>
 	<meta
 		name="description"
 		content="An attempt to quantify gender expression by creating 100 million genders, while maintaining human readability."
 	/>
 	<meta
 		name="keywords"
-		content="GIC-4, gender code, gender descriptor, gender spectrum shorthand, gender quantization, nonbinary identifier, gender code, gender notation, gender presentation code, trans planning tool"
+		content="GIC-4, gender code, gender, gender spectrum, gender quantization, nonbinary, gender code, transgender, gender presentation, trans"
 	/>
-	<meta property="og:title" content="GIC-4 - Human Readable Gender Quantifier" />
+	<meta property="og:title" content="GIC-4 - Gender Intensity Code - 4" />
 	<meta
 		property="og:description"
 		content="An attempt to quantify gender expression by creating 100 million genders, while maintaining human readability."

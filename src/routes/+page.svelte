@@ -6,9 +6,7 @@
 		ButtonGroup,
 		Card,
 		Heading,
-		Mark,
 		P,
-		Span,
 		Toggle,
 		Tooltip
 	} from 'flowbite-svelte';
@@ -18,9 +16,10 @@
 	import _zip from 'lodash/zip';
 	import _chunk from 'lodash/chunk';
 	import type { IroColorPicker } from '@jaames/iro/dist/ColorPicker';
-	import { getContrastTextColor, getSegmentMeaning } from '$lib/utils';
+	import { getSegmentMeaning } from '$lib/utils';
 	import type { GICDigits } from '$lib/types';
 	import GitHubLink from '$lib/components/GitHubLink.svelte';
+	import ColorCode from '$lib/components/ColorCode.svelte';
 	// Access query params using browser API, reactive
 	let code = $state('');
 	let ignoreAlpha = $state(false);
@@ -146,37 +145,74 @@
 		return `hsla(${colorCode.map((c) => c.hsl).join(', ')})`;
 	}
 
+	const ulClass = 'list-disc ml-6 flex flex-col gap-y-2 mt-2';
+
 	const accordion = [
 		{
 			title: 'What is GIC-4?',
-			content: `<strong>GIC-4</strong> is a compact four-pair numeric code that quantizes a person’s gender goal across:
-				<ul class="list-disc ml-6 mt-2">
-					<li><strong>Presentation</strong></li>
-					<li><strong>Chest</strong></li>
-					<li><strong>Genitals</strong></li>
-					<li><strong>Skin/Hair</strong></li>
-				</ul>
- 				Each pair uses:
-				<ul class="list-disc ml-6 mt-2">
-					<li><strong>Tens digit</strong>: direction (0 = fully female → 9 = fully male)</li>
-					<li><strong>Ones digit</strong>: intensity (0 = minimal → 9 = high)</li>
-				</ul>
- 				Use “-” to omit intensity when not applicable.
+			content: `
+			<strong>GIC-4 (Gender Intensity Code - 4)</strong> is a compact four-pair numeric code that quantizes a person’s gender across:
+			<ul class="${ulClass}">
+				<li>Presentation</li>
+				<li>Chest</li>
+				<li>Genitals</li>
+				<li>Skin/Hair</li>
+			</ul>
+			Each pair uses:
+			<ul class="${ulClass}">
+				<li>Tens digit: direction (0 = fully female → 9 = fully male)</li>
+				<li>Ones digit: intensity (0 = minimal → 9 = high)</li>
+			</ul>
+			Use "-" to omit intensity when not applicable.
 			`
 		},
 		{
-			title: 'How Does It Work?',
-			content: `GIC-4 breaks down gender expression into four key areas: overall, chest, genitals, and skin/hair.
- 				Each area is represented by a pair of digits, allowing for a nuanced representation of an individual's gender goals.
+			title: 'Examples',
+			content: `
+			A cis woman might have a GIC-4 code of <code>27,08,08,12</code>
+            What does it mean?
+            <ul class="${ulClass}">
+                <li>26: this person is very feminine overall.</li>
+                <li>08: this person has very feminine-looking breasts, and quite big.</li>
+                <li>08: this person has very feminine-looking genitalia, and quite developed.</li>
+                <li>12: this person has very soft skin, and not hairy.</li>
+            </ul>
+            
+            An agender person might have a GIC-4 code of <code>-8,62,-5,00</code>
+            <ul class="${ulClass}">
+                <li>-2: this person doesn't believe in the binary sex spectrum; however, they do believe in the concept of gender; it's just that we have no experience.</li>
+                <li>62: this person has an ambiguous flat chest.</li>
+                <li>-5: this person's private parts are neither found on male nor female; it's a different expression entirely.</li>
+                <li>00: this person has very soft hairless skin.</li>
+            </ul>
+            
+            A gender fluid person might have a GIC-4 code of <code>(27,08,08,12)-(87,86,77,00)</code>
+            They can express their gender with multiple GIC-4 codes, switching between them as they feel.
+
+
+            If your gender is a collapsible wave function, you can write it in bra-ket notation. Example:
+
+            <code>|Ψ⟩ = c₁|(27,08,08,12)⟩ + c₂|(87,86,77,00)⟩</code>
+
+            This will represent gender superposition.
+            `
+		},
+		{
+			title: 'Why does It Matter?',
+			content: `
+			There are no numeric representations for the wide gender spectrum and complicated nonbinary definitions. This tool can help people (not just trans or nonbinary):
+			<ul class="${ulClass}">
+				<li>Provides a more granular understanding of gender identity and expression, moving beyond the binary framework.</li>
+				<li>Acknowledges the complexity of gender, including the nonbinary spectrum, agender, demigenders, and more!</li>
+				<li>Allows individuals to exchange their gender easily.</li>
+            </ul>
+			And most importantly, it expresses that gender is a human-made label. You don't have to fit into any predefined boxes. You can pick and choose your own.
 			`
 		},
 		{
-			title: 'Why Does It Matter?',
-			content: `<ul class="list-disc ml-6 mt-2">
-					<li>Provides a more granular understanding of gender identity and expression, moving beyond the binary framework.</li>
-					<li>Acknowledges the complexity of gender.</li>
-					<li>Allows individuals to exchange their gender goal easily.</li>
-				</ul>
+			title: 'How is the Color Generated?',
+			content: `
+			The color is generated from the GIC-4 code, mapping each pair to the digits to HSLA or RGBA values after normalization. It is just a visual representation of the code, and has no inherent meaning. You can switch between HSLA and RGBA views.
 			`
 		}
 	];
@@ -215,19 +251,8 @@
 				size="lg"
 			>
 				<div class="mx-auto flex flex-col items-center space-y-8 text-center">
-					<Heading tag="h2"
-						>Your GIC-4 Code is <Mark
-							style={`background-color: ${gicColor}`}
-							class="
-         cursor-pointer text-slate-800
-         dark:text-white
-       "
-							onclick={() => {
-								if (code) navigator.clipboard.writeText(code);
-							}}
-						>
-							<Span style={`color: ${getContrastTextColor(gicColor)}`}>{code}</Span>
-						</Mark>
+					<Heading tag="h2">
+						Your GIC-4 Code is <ColorCode {gicColor} text={code} />
 						<Tooltip>Copied to clipboard</Tooltip>
 					</Heading>
 					<ButtonGroup class="*:ring-primary-700!">
@@ -244,18 +269,7 @@
 					<div class="mx-auto h-24 w-24" style={`background-color: ${gicColor}`}></div>
 					<Heading tag="h3" class="text-lg">
 						Your GIC-4 Color is
-						<Mark
-							style={`background-color: ${gicColor}`}
-							class="
-         cursor-pointer text-slate-800
-         dark:text-white
-       "
-							onclick={() => {
-								navigator.clipboard.writeText(gicColor);
-							}}
-						>
-							<Span style={`color: ${getContrastTextColor(gicColor)}`}>{gicColor}</Span>
-						</Mark>
+						<ColorCode {gicColor} text={gicColor} />
 						<Tooltip>Copied to clipboard</Tooltip>
 					</Heading>
 					<div class="flex flex-col items-center gap-2">
@@ -364,7 +378,7 @@
       "
 					>
 						<!-- eslint-disable svelte/no-at-html-tags -->
-						{@html item.content}
+						{@html item.content.trim()}
 					</div>
 				</AccordionItem>
 			{/each}
