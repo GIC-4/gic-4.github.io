@@ -13,29 +13,20 @@
 	import { ArrowRightOutline } from 'flowbite-svelte-icons';
 	import { onMount } from 'svelte';
 	import iro from '@jaames/iro';
-	import _zip from 'lodash/zip';
-	import _chunk from 'lodash/chunk';
 	import type { IroColorPicker } from '@jaames/iro/dist/ColorPicker';
-	import { getSegmentMeaning } from '$lib/utils';
-	import type { GICDigits } from '$lib/types';
+	import { genExplain } from '$lib/utils';
 	import GitHubLink from '$lib/components/GitHubLink.svelte';
 	import ColorCode from '$lib/components/ColorCode.svelte';
-	// Access query params using browser API, reactive
-	let code = $state('');
+	import _chunk from 'lodash/chunk';
+	import { queryCode } from '$lib/store';
+
 	let ignoreAlpha = $state(false);
 
-	function updateCodeFromURL() {
-		const params = new URLSearchParams(window.location.search);
-		code = params.get('code') ?? '';
-	}
-	onMount(() => {
-		updateCodeFromURL();
-		window.addEventListener('popstate', updateCodeFromURL);
-		return () => window.removeEventListener('popstate', updateCodeFromURL);
-	});
 	let pickerView = $state('HSLA');
+	let isInit = $state(false);
+
 	let numberArray = $derived(
-		code
+		$queryCode
 			?.split(',')
 			.flatMap((s) => s.split(''))
 			.map((s) => {
@@ -66,39 +57,43 @@
 				hsl
 			};
 		});
-		console.log(b);
 		return b;
 	});
 	let picker = $state<IroColorPicker>();
 	onMount(() => {
-		if (code) {
-			// Responsive width for ColorPicker
-			function getPickerWidth() {
-				if (window.innerWidth < 640) return 200; // sm
-				if (window.innerWidth < 768) return 260; // md
-				if (window.innerWidth < 1024) return 300; // lg
-				return 300; // xl+
-			}
-			picker = iro.ColorPicker('#picker', {
-				width: getPickerWidth(),
-				layout: [
-					{
-						component: iro.ui.Wheel
+		queryCode.subscribe((code) => {
+			if (code && !isInit) {
+				setTimeout(() => {
+					// Responsive width for ColorPicker
+					function getPickerWidth() {
+						if (window.innerWidth < 640) return 200; // sm
+						if (window.innerWidth < 768) return 260; // md
+						if (window.innerWidth < 1024) return 300; // lg
+						return 300; // xl+
 					}
-				]
-			});
-			window.addEventListener('resize', () => {
-				if (picker) picker.resize(getPickerWidth());
-			});
-			picker.on('color:change', () => {
-				changePickerView(pickerView);
-			});
-			changePickerView(pickerView);
+					picker = iro.ColorPicker('#picker', {
+						width: getPickerWidth(),
+						layout: [
+							{
+								component: iro.ui.Wheel
+							}
+						]
+					});
+					isInit = true;
+					window.addEventListener('resize', () => {
+						if (picker) picker.resize(getPickerWidth());
+					});
+					picker.on('color:change', () => {
+						changePickerView(pickerView);
+					});
+					changePickerView(pickerView);
 
-			if (requireMoreAlpha()) {
-				ignoreAlpha = true;
+					if (requireMoreAlpha()) {
+						ignoreAlpha = true;
+					}
+				}, 100);
 			}
-		}
+		});
 	});
 
 	function changePickerView(view: string) {
@@ -160,10 +155,16 @@
 			</ul>
 			Each pair uses:
 			<ul class="${ulClass}">
-				<li>Tens digit: direction (0 = fully female → 9 = fully male)</li>
-				<li>Ones digit: intensity (0 = minimal → 9 = high)</li>
+				<li>The first digit: direction (0 = fully female → 9 = fully male)</li>
+				<li>The second digit: intensity (0 = minimal → 9 = high)</li>
 			</ul>
 			Use "-" to omit intensity when not applicable.
+			`
+		},
+		{
+			title: 'What does "intensity" mean?',
+			content: `
+			It indicates how strongly or how fully that characteristic is expressed, i.e., the magnitude or development of the trait. This is what makes GIC-4 unique, what is missing from all other gender quantification systems.			
 			`
 		},
 		{
@@ -214,33 +215,19 @@
 			content: `
 			The color is generated from the GIC-4 code, mapping each pair to the digits to HSLA or RGBA values after normalization. It is just a visual representation of the code, and has no inherent meaning. You can switch between HSLA and RGBA views.
 			`
+		},
+		{
+			title: 'Privacy: How is my result stored?',
+			content: `
+			This website is fully static, client-side only. Your GIC-4 code and color are not stored on any server. The only way to share your result is through the URL generated when you share it manually. You can verify this by inspecting the network requests in your browser's developer tools, or checking our source code on GitHub.
+			`
 		}
 	];
-
-	function genExplain() {
-		const chunks = _chunk(numberArray, 2).map((x, i) => {
-			return getSegmentMeaning(x as [GICDigits | undefined, GICDigits | undefined], i).replace(
-				'It means you are ',
-				''
-			);
-		});
-
-		const segmentNames = [
-			'Your overall representation is ',
-			'Your chest is ',
-			'Your genitals are ',
-			'Your have '
-		];
-
-		return _zip(segmentNames, chunks)
-			.map(([a, b]) => a! + b)
-			.join('\n');
-	}
 </script>
 
 <GitHubLink />
 <div class="mt-8 space-y-12 text-center">
-	{#if code}
+	{#if $queryCode}
 		<div class="mx-auto flex flex-col items-center">
 			<Card
 				class="
@@ -252,7 +239,7 @@
 			>
 				<div class="mx-auto flex flex-col items-center space-y-8 text-center">
 					<Heading tag="h2">
-						Your GIC-4 Code is <ColorCode {gicColor} text={code} />
+						Your GIC-4 Code is <ColorCode {gicColor} text={$queryCode} />
 						<Tooltip>Copied to clipboard</Tooltip>
 					</Heading>
 					<ButtonGroup class="*:ring-primary-700!">
@@ -295,17 +282,17 @@
 					<div class="flex flex-col items-center">
 						<Heading tag="h3" class="mb-2 text-lg">What Does This Mean?</Heading>
 						<P class="mx-auto whitespace-pre-line">
-							{genExplain()}
+							{genExplain(numberArray)}
 						</P>
 					</div>
 					<div class="flex flex-col items-center gap-3">
 						<Button
 							onclick={() => {
-								const url = `${window.location.origin}${window.location.pathname}?code=${code}`;
+								const url = `${window.location.origin}${window.location.pathname}?code=${$queryCode}`;
 								if (navigator.share) {
 									navigator.share({
 										title: 'My GIC-4 Result',
-										text: `Check out my GIC-4 code: ${code}`,
+										text: `Check out my GIC-4 code: ${$queryCode}`,
 										url
 									});
 								}
@@ -368,8 +355,8 @@
 
 	<div class="mx-auto w-fit text-left">
 		<Accordion multiple={true}>
-			{#each accordion as item (item.title)}
-				<AccordionItem open={true}>
+			{#each accordion as item, i (item.title)}
+				<AccordionItem open={i === 0}>
 					{#snippet header()}{item.title}{/snippet}
 					<div
 						class="

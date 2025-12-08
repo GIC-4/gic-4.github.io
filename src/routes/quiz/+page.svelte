@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import SelectChart from '$lib/components/SelectChart.svelte';
-	import { loadChart } from '$lib/store';
+	import { loadChart, queryCode } from '$lib/store';
 	import type { GIC4Segment, GICDigits } from '$lib/types';
 	import {
 		blue,
@@ -20,6 +20,10 @@
 	let slideY = $state<number | undefined>(undefined);
 
 	let steps = [
+		{
+			name: 'Step 0: Intro',
+			title: 'Intro'
+		},
 		{
 			name: 'Step 1: Overall/Psychological',
 			title: "What's your overall/psychological gender expression?"
@@ -46,7 +50,7 @@
 
 	let selectedPoint = $state<GIC4Segment | undefined>(undefined);
 
-	let selections = $state<(GIC4Segment | undefined)[]>(Array.from({ length: 4 }, () => undefined));
+	let selections = $state<(GIC4Segment | undefined)[]>(Array.from({ length: 5 }, () => undefined));
 
 	let currentSegment = $derived.by<[GICDigits, GICDigits] | undefined>(() => {
 		let x: GICDigits | undefined;
@@ -99,7 +103,7 @@
 	}
 
 	function onNext() {
-		if (selections[currentStep]) {
+		if (selections[currentStep] || currentStep === 1) {
 			currentStep += 1;
 			loadStep(currentStep);
 		} else {
@@ -116,7 +120,9 @@
 				if (currentStep != steps.length) {
 					currentStep += 1;
 				} else {
-					goto('./?code=' + formatSegments(selections as GIC4Segment[]));
+					const result = formatSegments(selections.slice(1) as GIC4Segment[]);
+					queryCode.set(result);
+					goto('./?code=' + result);
 				}
 			}
 		}
@@ -145,79 +151,101 @@
       md:text-4xl
     ">{steps[currentStep - 1].title}</Heading
 			>
-			{#if !omitX && !omitY}
-				<div class="mx-auto flex justify-center">
-					<SelectChart
-						height={SIZE}
-						width={SIZE}
-						{onPointSelect}
-						labelX={steps[currentStep - 1].labelX || 'Fem <-> Masc'}
-						labelY={steps[currentStep - 1].labelY || 'Intensity'}
-					/>
-				</div>
-			{:else if omitX && !omitY && !steps[currentStep - 1].disableOmit}
-				<div class="space-y-4">
-					<P>How intensely do you feel your expression?</P>
-					<Range
-						value={slideY}
-						max="9"
-						min="0"
-						step="1"
-						oninput={(e) => (slideY = e.currentTarget.valueAsNumber)}
-					/>
-					<div class="flex justify-between">
-						<P>Not Intense</P>
-						<P>{slideY}</P>
-						<P>Very Intense</P>
-					</div>
-				</div>
-			{:else if !omitX && omitY && !steps[currentStep - 1].disableOmit}
-				<div class="space-y-4">
-					<P>How do you feel your gender expression?</P>
-					<Range
-						value={slideX}
-						max="9"
-						min="0"
-						step="1"
-						oninput={(e) => (slideX = e.currentTarget.valueAsNumber)}
-					/>
-					<div class="flex justify-between">
-						<P>Feminine</P>
-						<P>{slideX}</P>
-						<P>Masculine</P>
-					</div>
-				</div>
+
+			{#if currentStep === 1}
+				<P>
+					Welcome to the GIC-4 Quiz! This quiz will help you determine your GIC-4 code. <br />
+				</P>
+				<P>
+					You will see a coordinate grid with the x-axis labeled "feminine &lt;-&gt; masculine" and
+					the y-axis labeled "intensity".<br />
+					Please select the point that best represents your <strong>ideal</strong> gender
+					expression.<br />
+				</P>
+				<P>
+					What does "intensity" mean?<br />
+					It indicates how strongly or how fully that characteristic is expressed. i.e., the magnitude
+					or development of the trait.<br />
+				</P>
+				<P>
+					You may omit either or both axes if they don't apply to you. <br />
+					Omitting the x-axis means you don't view your expression as a gender binary spectrum<br />
+					Omitting the y-axis means intensity doesn't apply to you.<br />
+				</P>
 			{:else}
-				<P>It's ok. Gender is complicated, and GIC-4 can accommodate that.</P>
-			{/if}
+				{#if !omitX && !omitY}
+					<div class="mx-auto flex justify-center">
+						<SelectChart
+							height={SIZE}
+							width={SIZE}
+							{onPointSelect}
+							labelX={steps[currentStep - 1].labelX || 'Fem <-> Masc'}
+							labelY={steps[currentStep - 1].labelY || 'Intensity'}
+						/>
+					</div>
+				{:else if omitX && !omitY && !steps[currentStep - 1].disableOmit}
+					<div class="space-y-4">
+						<P>How intensely do you feel your expression?</P>
+						<Range
+							value={slideY}
+							max="9"
+							min="0"
+							step="1"
+							oninput={(e) => (slideY = e.currentTarget.valueAsNumber)}
+						/>
+						<div class="flex justify-between">
+							<P>Not Intense</P>
+							<P>{slideY}</P>
+							<P>Very Intense</P>
+						</div>
+					</div>
+				{:else if !omitX && omitY && !steps[currentStep - 1].disableOmit}
+					<div class="space-y-4">
+						<P>How do you feel your gender expression?</P>
+						<Range
+							value={slideX}
+							max="9"
+							min="0"
+							step="1"
+							oninput={(e) => (slideX = e.currentTarget.valueAsNumber)}
+						/>
+						<div class="flex justify-between">
+							<P>Feminine</P>
+							<P>{slideX}</P>
+							<P>Masculine</P>
+						</div>
+					</div>
+				{:else}
+					<P>It's ok. Gender is complicated, and GIC-4 can accommodate that.</P>
+				{/if}
 
-			{#if !steps[currentStep - 1].disableOmit}
-				<Toggle
-					checked={omitX}
-					onchange={(e) => {
-						omitX = (e.currentTarget as HTMLInputElement).checked;
-					}}>My expression is not on binary human spectrum.</Toggle
-				>
-				<Toggle
-					checked={omitY}
-					onchange={(e) => (omitY = (e.currentTarget as HTMLInputElement).checked)}
-					>The intensity of my expression is not on a binary spectrum.</Toggle
-				>
+				{#if !steps[currentStep - 1].disableOmit}
+					<Toggle
+						checked={omitX}
+						onchange={(e) => {
+							omitX = (e.currentTarget as HTMLInputElement).checked;
+						}}>My expression is not on binary human spectrum.</Toggle
+					>
+					<Toggle
+						checked={omitY}
+						onchange={(e) => (omitY = (e.currentTarget as HTMLInputElement).checked)}
+						>The intensity of my expression is not on a binary spectrum.</Toggle
+					>
+				{/if}
 			{/if}
-
 			{#if currentSegment}
 				<div class="flex justify-between">
 					<div class="flex items-center gap-2">
 						<Badge rounded large style={`background-color: ${badgeColor}`} class="text-nowrap"
 							>{formatSegment(currentSegment)}</Badge
 						>
-						<P class="text-warp">{getSegmentMeaning(currentSegment, currentStep - 1)}</P>
+						<P class="text-warp">You {getSegmentMeaning(currentSegment, currentStep - 1)}</P>
 					</div>
 				</div>
 			{/if}
 			<div class="flex justify-between">
 				<Button onclick={onBack} disabled={currentStep === 1}>Back</Button>
-				<Button onclick={onNext} disabled={!currentSegment}>Next</Button>
+				<Button onclick={onNext} disabled={!currentSegment && currentStep !== 1}>Next</Button>
 			</div>
 		</div>
 	</Card>

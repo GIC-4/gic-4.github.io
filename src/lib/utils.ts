@@ -1,4 +1,6 @@
 import type { GICDigits } from './types';
+import _zip from 'lodash/zip';
+import _chunk from 'lodash/chunk';
 
 export const pink = '#ec4899';
 export const blue = '#3b82f6';
@@ -44,55 +46,69 @@ export function getSegmentMeaning(
 	i: number = 0
 ): string {
 	if (v[0] === undefined || v[1] === undefined) return '';
-	const result = ['It means you are '];
+	const result = [];
 
 	const x = v[0];
 	const y = v[1];
 	if (i != 3) {
 		if (x === null) {
-			result[0] += 'not on binary gender spectrum';
-		} else if (x >= 7) {
-			result[0] += 'very masculine';
-		} else if (x >= 4) {
-			result[0] += 'somewhere in between';
+			result.push('are not on binary gender spectrum');
+		} else if (x >= 8) {
+			result.push('are masculine');
+		} else if (x >= 6) {
+			result.push('lean more toward the masculine side');
+		} else if (x >= 5) {
+			result.push('are somewhere in between');
+		} else if (x >= 3) {
+			result.push('lean more toward the feminine side');
 		} else {
-			result[0] += 'very feminine';
+			result.push('are feminine');
 		}
 
 		if (y === null) {
-			result.push("and don't care about how much.");
-		} else if (y >= 7) {
-			result.push('very much so.');
+			result.push("and don't care about how much");
+		} else if (y >= 8) {
+			result.push('extremely prominent');
+		} else if (y >= 6) {
+			result.push('quite apparent');
 		} else if (y >= 4) {
-			result.push('moderately.');
+			result.push('moderately pronounced');
+		} else if (y >= 2) {
+			result.push('subtly present');
 		} else {
-			if (!(x && x > 3 && x < 7)) {
-				result.push('but not too much.');
-			}
+			result.push('almost nonexistent');
 		}
 	} else {
 		if (x === null) {
-			result[0] += 'not possible';
-		} else if (x >= 7) {
-			result[0] += 'very tough skin';
+			result.push('not possible');
+		} else if (x >= 8) {
+			result.push('have extremely rough skin');
+		} else if (x >= 6) {
+			result.push('have noticeably rough skin');
 		} else if (x >= 4) {
-			result[0] += 'somewhere in between';
+			result.push('have somewhere smooth skin');
+		} else if (x >= 2) {
+			result.push('have quite soft skin');
 		} else {
-			result[0] += 'very soft skin';
+			result.push('have silky smooth skin');
 		}
 
 		if (y === null) {
 			result.push('not possible.');
-		} else if (y >= 7) {
-			result.push('and very hairy.');
+		} else if (y >= 8) {
+			result.push('and exceptionally hairy');
+		} else if (y >= 6) {
+			result.push('and quite hairy');
 		} else if (y >= 4) {
-			result.push('and moderately hairy.');
+			result.push('and moderately hairy');
+		} else if (y >= 2) {
+			result.push('with lightly fuzzy hair');
 		} else {
-			result.push('and not very hairy.');
+			result.push('and almost hairless');
 		}
 	}
 
-	return result.join(', ');
+	return result.join(', ') + '.';
 }
 
 export function getContrastTextColor(color: string): string {
@@ -141,4 +157,22 @@ export function getContrastTextColor(color: string): string {
 	// console.log('luminance', luminance, color);
 
 	return luminance > 0.5 ? '#222' : '#fff';
+}
+
+export function genExplain(numberArray: number[], firstPerson = false): string {
+	const chunks = _chunk(numberArray, 2).map((x, i) => {
+		return getSegmentMeaning(x as [GICDigits | undefined, GICDigits | undefined], i).replace(
+			'It means you ',
+			''
+		);
+	});
+
+	const char = firstPerson ? 'My' : 'Your';
+	const char1 = firstPerson ? 'I' : 'You';
+
+	const segmentNames = [`${char1} overall `, `${char} chests `, `${char} genital(s) `, `${char} `];
+
+	return _zip(segmentNames, chunks)
+		.map(([a, b]) => a! + b)
+		.join('\n');
 }
