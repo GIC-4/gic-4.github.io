@@ -239,7 +239,7 @@
 						<Badge rounded large style={`background-color: ${badgeColor}`} class="text-nowrap"
 							>{formatSegment(currentSegment)}</Badge
 						>
-						<P class="text-warp">You {getSegmentMeaning(currentSegment, currentStep - 1)}</P>
+						<P class="text-warp">You {getSegmentMeaning(currentSegment, currentStep - 2)}</P>
 					</div>
 				</div>
 			{/if}

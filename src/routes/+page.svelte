@@ -29,7 +29,7 @@
 		{
 			title: 'What does "intensity" mean?',
 			content: `
-			It indicates how strongly or how fully that characteristic is expressed, i.e., the magnitude or development of the trait. This is what makes GIC-4 unique, what is missing from all other gender quantification systems.			
+			It indicates how strongly or how fully that characteristic is expressed, i.e., the magnitude or development of the trait. This is what makes GIC-4 unique, what is missing from all other gender quantification systems.
 			`
 		},
 		{
@@ -38,12 +38,12 @@
 			A cis woman might have a GIC-4 code of <code>27,08,08,12</code>
             What does it mean?
             <ul class="${ulClass}">
-                <li>26: this person is very feminine overall.</li>
+                <li>27: this person is very feminine overall.</li>
                 <li>08: this person has very feminine-looking breasts, and quite big.</li>
                 <li>08: this person has very feminine-looking genitalia, and quite developed.</li>
                 <li>12: this person has very soft skin, and not hairy.</li>
             </ul>
-            
+
             An agender person might have a GIC-4 code of <code>-8,62,-5,00</code>
             <ul class="${ulClass}">
                 <li>-2: this person doesn't believe in the binary sex spectrum; however, they do believe in the concept of gender; it's just that we have no experience.</li>
@@ -51,7 +51,7 @@
                 <li>-5: this person's private parts are neither found on male nor female; it's a different expression entirely.</li>
                 <li>00: this person has very soft hairless skin.</li>
             </ul>
-            
+
             A gender fluid person might have a GIC-4 code of <code>(27,08,08,12)-(87,86,77,00)</code>
             They can express their gender with multiple GIC-4 codes, switching between them as they feel.
 
@@ -128,7 +128,7 @@
 		</Button>
 	</div>
 
-	<div class="mx-auto w-fit text-left">
+	<div class="mx-auto w-full text-left">
 		<Accordion multiple={true}>
 			{#each accordion as item, i (item.title)}
 				<AccordionItem open={i === 0}>
