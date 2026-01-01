@@ -22,7 +22,7 @@ import"../chunks/DsnmJJEf.js";import"../chunks/xrWqBW0E.js";import{t as ce,v as 
      `,children:(E,se)=>{W();var M=X("You can share your GIC-4 code and color with friends using the button above.");C(E,M)},$$slots:{default:!0}}),T(Z),T(k),ce(()=>xr(D,`background-color: ${_(l)}`)),C(g,k)},$$slots:{default:!0}}),T(b),C(e,b),he(),n()}var Ho=F("Take Quiz <!>",1),No=F(`<div class="
         mb-2 whitespace-pre-line text-gray-500
         dark:text-gray-400
-      "><!></div>`),Wo=F('<!> <div class="mt-8 space-y-12 text-center"><!> <div><!></div> <div><!></div> <div><!></div> <div class="mx-auto w-fit text-left"><!></div></div>',1);function Vo(e){const[t,r]=yn(),n=()=>mn(bn,"$queryCode",t),i="list-disc ml-6 flex flex-col gap-y-2 mt-2",o=[{title:"What is GIC-4?",content:`
+      "><!></div>`),Wo=F('<!> <div class="mt-8 space-y-12 text-center"><!> <div><!></div> <div><!></div> <div><!></div> <div class="mx-auto w-full text-left"><!></div></div>',1);function Vo(e){const[t,r]=yn(),n=()=>mn(bn,"$queryCode",t),i="list-disc ml-6 flex flex-col gap-y-2 mt-2",o=[{title:"What is GIC-4?",content:`
 			<strong>GIC-4 (Gender Intensity Code - 4)</strong> is a compact four-pair numeric code that quantizes a person’s gender across:
 			<ul class="${i}">
 				<li>Presentation</li>
@@ -37,17 +37,17 @@ import"../chunks/DsnmJJEf.js";import"../chunks/xrWqBW0E.js";import{t as ce,v as 
 			</ul>
 			Use "-" to omit intensity when not applicable.
 			`},{title:'What does "intensity" mean?',content:`
-			It indicates how strongly or how fully that characteristic is expressed, i.e., the magnitude or development of the trait. This is what makes GIC-4 unique, what is missing from all other gender quantification systems.			
+			It indicates how strongly or how fully that characteristic is expressed, i.e., the magnitude or development of the trait. This is what makes GIC-4 unique, what is missing from all other gender quantification systems.
 			`},{title:"Examples",content:`
 			A cis woman might have a GIC-4 code of <code>27,08,08,12</code>
             What does it mean?
             <ul class="${i}">
-                <li>26: this person is very feminine overall.</li>
+                <li>27: this person is very feminine overall.</li>
                 <li>08: this person has very feminine-looking breasts, and quite big.</li>
                 <li>08: this person has very feminine-looking genitalia, and quite developed.</li>
                 <li>12: this person has very soft skin, and not hairy.</li>
             </ul>
-            
+
             An agender person might have a GIC-4 code of <code>-8,62,-5,00</code>
             <ul class="${i}">
                 <li>-2: this person doesn't believe in the binary sex spectrum; however, they do believe in the concept of gender; it's just that we have no experience.</li>
@@ -55,7 +55,7 @@ import"../chunks/DsnmJJEf.js";import"../chunks/xrWqBW0E.js";import{t as ce,v as 
                 <li>-5: this person's private parts are neither found on male nor female; it's a different expression entirely.</li>
                 <li>00: this person has very soft hairless skin.</li>
             </ul>
-            
+
             A gender fluid person might have a GIC-4 code of <code>(27,08,08,12)-(87,86,77,00)</code>
             They can express their gender with multiple GIC-4 codes, switching between them as they feel.
 
