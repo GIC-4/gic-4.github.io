@@ -64,15 +64,16 @@
             `
 		},
 		{
-			title: 'Why does It Matter?',
+			title: 'Why does It Matter/How do I use it?',
 			content: `
-			There are no numeric representations for the wide gender spectrum and complicated nonbinary definitions. This tool can help people (not just trans or nonbinary):
+			There are no numeric representations that fully capture the wide gender spectrum or the complex definitions of nonbinary identities. This tool can help people (not only trans or nonbinary individuals):
 			<ul class="${ulClass}">
-				<li>Provides a more granular understanding of gender identity and expression, moving beyond the binary framework.</li>
-				<li>Acknowledges the complexity of gender, including the nonbinary spectrum, agender, demigenders, and more!</li>
-				<li>Allows individuals to exchange their gender easily.</li>
+				<li>Understand their gender goal, provide a framework to talk to their gender care provider.</li>
+				<li>Acknowledges the complexity of gender on the nonbinary spectrum, such as agender, demigenders, and more.</li>
+				<li>Allows individuals to exchange their gender easily online.</li>
             </ul>
-			And most importantly, it expresses that gender is a human-made label. You don't have to fit into any predefined boxes. You can pick and choose your own.
+			Gender is a human-made label. You don't have to fit into any predefined boxes. You can pick and choose your own.
+			Most importantly, treat this as an icebreaker: it doesn’t define you; it starts a conversation or a thought process about you.
 			`
 		},
 		{
